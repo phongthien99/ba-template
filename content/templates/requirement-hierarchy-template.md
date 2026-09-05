@@ -6,7 +6,21 @@ weight: 1
 
 # Requirement Hierarchy Template
 
-Template này dùng để ghi requirement theo cấu trúc phân cấp, nhưng không bắt buộc mọi User Story phải đi qua Use Case.
+Template này mô tả **cấu trúc phân cấp requirement** (Module → Epic → Feature → Use Case/User Story → Acceptance Criteria → Test Scenario), không bắt buộc mọi User Story phải đi qua Use Case.
+
+Template không gắn với một công cụ cụ thể — có thể triển khai bằng file Markdown (như example trong repo này), trang Confluence, hoặc issue/sub-task trong Jira. Mỗi "item" nói tới trong template (Module, Epic, Feature, Use Case, User Story, AC, Test Scenario) tương ứng với:
+
+| Level | File-based (repo này) | Confluence | Jira |
+|-------|------------------------|------------|------|
+| Module | thư mục `module-xxx/` + `_index.md` | trang cha | Project hoặc Component |
+| Epic | thư mục `epic-xxx/` + `_index.md` | trang con | Epic |
+| Feature | thư mục `feat-xxx/` + `_index.md` | trang con | Epic con hoặc Feature label |
+| Use Case | thư mục `uc-xxx/` + `_index.md` | trang con | Story (loại "Use Case") hoặc mô tả trong Epic |
+| User Story | file `us-xxx.md` | section trong trang, hoặc trang con | Story |
+| Acceptance Criteria | section `### AC-XXX` trong cùng file US | section trong cùng trang US | mô tả/AC field trong cùng issue Story (không tách issue riêng) |
+| Test Scenario | section hoặc file riêng | trang/section riêng | Test case liên kết (Xray/Zephyr) hoặc sub-task |
+
+Các quy tắc về **ID, Parent/Related, nơi đặt Business Rules, Glossary** áp dụng như nhau bất kể công cụ; chỉ cách "tách file" hay "tách issue/trang" là khác nhau theo công cụ.
 
 ```
 Module  ──────────────►  Business Goal
@@ -34,14 +48,14 @@ Test Scenario
 - Sau đó tạo **Feature**, rồi chọn cách phân rã phù hợp: qua **Use Case** hoặc viết **User Story** trực tiếp dưới Feature.
 - Xem **Use Case** và **User Story** là hai cách decomposition/representation hợp lệ ở cấp Feature. User Story có thể được sinh ra từ Use Case, hoặc nằm trực tiếp dưới Feature khi không cần UC đầy đủ.
 - Mỗi item cần có **ID** và **Parent** để giữ traceability. Field **Related** chỉ dùng cho quan hệ ngang cấp, không dùng thay cho Parent.
-- **Acceptance Criteria luôn nằm chung 1 file với User Story cha** (không tách file `ac-xxx.md` riêng): mỗi AC là một section riêng trong cùng file `us-xxx.md`, đặt ngay dưới phần Definition of Ready. Lý do: AC là điều kiện hoàn thành của đúng US đó, tách file dễ gây lệch version và khó đọc theo mạch US → AC.
-- Rule/spec nào dùng chung cho nhiều item con thì đưa vào `_common/` ở tầng cha gần nhất.
+- **Acceptance Criteria luôn nằm chung trong cùng item với User Story cha** (không tách thành item riêng — không tách file, không tách trang, không tách issue): mỗi AC là một section riêng, đặt ngay dưới phần Definition of Ready. Lý do: AC là điều kiện hoàn thành của đúng US đó, tách riêng dễ gây lệch version và khó đọc theo mạch US → AC.
+- Rule/spec nào dùng chung cho nhiều item con thì đưa vào một chỗ dùng chung (`_common/` nếu là file, trang "Common" nếu là Confluence, mô tả chung ở Epic nếu là Jira) đặt ở tầng cha gần nhất.
 
 ## Từ điển thuật ngữ
 
 Từ điển thuật ngữ giúp BA, Dev, QA và stakeholder dùng cùng một ngôn ngữ khi đọc requirement.
 
-**Glossary luôn đặt duy nhất ở `_common/glossary.md` cấp Module**, không tạo thêm glossary riêng ở Epic hay Feature. Lý do: thuật ngữ nghiệp vụ cần thống nhất trong toàn Module để tránh một từ có nhiều nghĩa khác nhau giữa các Feature; nếu một thuật ngữ chỉ phát sinh trong 1 Feature, vẫn khai báo nó vào glossary chung của Module thay vì tách lẻ.
+**Glossary luôn đặt duy nhất ở một chỗ dùng chung cấp Module** (`_common/glossary.md` nếu là file, một trang Glossary con của trang Module nếu là Confluence), không tạo thêm glossary riêng ở Epic hay Feature. Lý do: thuật ngữ nghiệp vụ cần thống nhất trong toàn Module để tránh một từ có nhiều nghĩa khác nhau giữa các Feature; nếu một thuật ngữ chỉ phát sinh trong 1 Feature, vẫn khai báo nó vào glossary chung của Module thay vì tách lẻ.
 
 | Field | Value |
 |-------|-------|
@@ -54,9 +68,9 @@ Từ điển thuật ngữ giúp BA, Dev, QA và stakeholder dùng cùng một n
 |------|------------------|
 | TERM-001 | |
 
-## Cấu trúc thư mục
+## Cấu trúc phân cấp (ví dụ minh hoạ bằng file)
 
-Thư mục nên được lồng theo đúng quan hệ chứa (containment), giống example:
+Ví dụ dưới đây minh hoạ containment bằng thư mục/file — nếu dùng Confluence thì thay bằng trang cha/trang con lồng nhau, nếu dùng Jira thì thay bằng Epic/Story/Sub-task liên kết qua field Parent:
 
 ```
 module-xxx/                                               ← MOD-XXX
@@ -266,8 +280,8 @@ Chỉ đặt rule ở đây nếu rule chỉ áp dụng cho đúng Use Case này
 - ID dùng prefix theo level: `MOD-001`, `EPIC-001`, `FEAT-001`, `UC-001`, `US-001`, `AC-001`, `TS-001`.
 - `Parent` trỏ đến đúng một parent trực tiếp. User Story có thể trỏ đến `UC-XXX` hoặc `FEAT-XXX`.
 - `Related` chỉ dùng cho quan hệ ngang cấp, ví dụ `Related Features: FEAT-002, FEAT-005`.
-- Khi tách item thành file riêng, giữ nguyên ID và dùng link lên/xuống như example: `↑ Parent`, `↓ Feature`, `↓ User Story`. Riêng **Acceptance Criteria không tách file riêng** — luôn là section (`### AC-XXX`) trong cùng file `us-xxx.md`, link bằng anchor (`#ac-xxx`) thay vì đường dẫn file.
-- `_common/` đặt ở tầng cha gần nhất của các item dùng chung rule/spec.
+- Khi tách item thành file/trang/issue riêng, giữ nguyên ID và dùng link lên/xuống như example: `↑ Parent`, `↓ Feature`, `↓ User Story`. Riêng **Acceptance Criteria không tách thành item riêng** — luôn là section (`### AC-XXX`) trong cùng item với User Story cha, link bằng anchor (`#ac-xxx`) hoặc mục tương đương thay vì đường dẫn/issue riêng.
+- Chỗ dùng chung (`_common/` nếu là file, trang/section "Common" nếu là Confluence/Jira) đặt ở tầng cha gần nhất của các item dùng chung rule/spec.
 
 ## Tiêu chuẩn Use Case
 
