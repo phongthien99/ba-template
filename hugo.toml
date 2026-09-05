@@ -1,0 +1,20 @@
+baseURL = 'https://example.com/'
+locale = 'vi-vn'
+title = 'Blog của tôi'
+theme = 'hugo-book'
+
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+
+[params]
+  BookSection = 'templates'
+  BookTheme = 'auto'
+  BookToC = true
+  BookSearch = true
+  BookComments = false
+
+[markup]
+  [markup.highlight]
+    noClasses = false
